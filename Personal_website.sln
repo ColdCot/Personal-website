@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Personal_website", "Personal_website\Personal_website.csproj", "{5FB69AC3-0202-40D8-9AF0-8DBB3FBBBBAA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XUnitTest", "XUnitTest\XUnitTest.csproj", "{14939CF8-2117-4C01-B312-BBC998F755CD}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5FB69AC3-0202-40D8-9AF0-8DBB3FBBBBAA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5FB69AC3-0202-40D8-9AF0-8DBB3FBBBBAA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5FB69AC3-0202-40D8-9AF0-8DBB3FBBBBAA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5FB69AC3-0202-40D8-9AF0-8DBB3FBBBBAA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{14939CF8-2117-4C01-B312-BBC998F755CD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{14939CF8-2117-4C01-B312-BBC998F755CD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{14939CF8-2117-4C01-B312-BBC998F755CD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{14939CF8-2117-4C01-B312-BBC998F755CD}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

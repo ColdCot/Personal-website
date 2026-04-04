@@ -1,0 +1,6 @@
+@Personal_website_HostAddress = http://localhost:5140
+
+GET {{Personal_website_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
