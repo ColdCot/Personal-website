@@ -1,3 +1,7 @@
+using Microsoft.EntityFrameworkCore;
+using Personal_website.DB;
+using Personal_website.Services;
+
 namespace Personal_website;
 
 public class Program
@@ -7,8 +11,11 @@ public class Program
         var builder = WebApplication.CreateBuilder(args);
 
         // Add services to the container.
-
         builder.Services.AddControllers();
+        builder.Services.AddDbContext<WebsiteDbContext>(options => 
+            options.UseSqlServer(/*Use connection string local variable*/));
+        
+        builder.Services.AddScoped<IMessageService, MessageService>();
         
         builder.Services.AddOpenApi();
         builder.Services.AddEndpointsApiExplorer(); 
