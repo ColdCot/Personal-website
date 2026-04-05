@@ -47,11 +47,10 @@ public class MessagesController(IMessageService messageService) : ControllerBase
     [HttpDelete("{id}")]
     public IActionResult Delete(int id)
     {
-        int result = messageService.Delete(id);
-
-        if (result == 1)
+        var result = messageService.Delete(id);
+        if (result == null)
         {
-            return BadRequest();
+            return NotFound();
         }
         
         return Ok();

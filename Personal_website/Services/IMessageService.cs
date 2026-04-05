@@ -9,5 +9,5 @@ public interface IMessageService
     public IEnumerable<Message> GetByEmail(string email);
     public IEnumerable<Message> GetByName(string name);
     public Message Create(string senderName, string senderEmail, string text);
-    public int Delete(int id);
+    public Message? Delete(int id);
 }

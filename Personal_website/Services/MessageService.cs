@@ -69,16 +69,16 @@ public class MessageService(WebsiteDbContext context) : IMessageService
         return message;
     }
 
-    public int Delete(int id)
+    public Message? Delete(int id)
     {
         Message? result = GetById(id);
         if (result == null)
         {
-            return 1;
+            return result;
         }
         
         context.Messages.Remove(result);
         context.SaveChanges();
-        return 0;
+        return result;
     }
 }
