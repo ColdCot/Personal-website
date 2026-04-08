@@ -45,7 +45,7 @@ public class AuthController : ControllerBase
             return Unauthorized();
         }
         
-        var signInResult = await _signInManager.CheckPasswordSignInAsync(user, loginDto.Password, false);
+        var signInResult = await _signInManager.CheckPasswordSignInAsync(user, loginDto.Password, true);
 
         if (!signInResult.Succeeded)
         {
@@ -53,14 +53,16 @@ public class AuthController : ControllerBase
         }
         
         var token = GenerateJwtToken(user);
-        return Ok(token);
+        return Ok(new { token });
     }
     
     private string GenerateJwtToken(User user)
     {
         var claims = new[]
         {
-            new Claim(ClaimTypes.Name, user.UserName),
+            new Claim(ClaimTypes.Name, user.UserName ?? string.Empty),
+            new Claim(JwtRegisteredClaimNames.Sub, user.Id),
+            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
         };
         
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]!));
