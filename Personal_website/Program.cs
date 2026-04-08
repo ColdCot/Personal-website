@@ -46,17 +46,24 @@ public class Program
             .AddEntityFrameworkStores<AuthDbContext>()
             .AddDefaultTokenProviders();
         
-        /*var jwtKey = builder.Configuration["Jwt:Key"]
-            ??throw new ArgumentException("The JWT Key environment variable is not set");
-        var jwtIssuer = builder.Configuration["Jwt:Issuer"]
-            ??throw new ArgumentException("The JWT ISSUER environment variable is not set");
-        var jwtAudience = builder.Configuration["Jwt:Audience"]
-            ??throw new ArgumentException("The JWT Audience environment variable is not set");*/
-        
-        
         var jwtOptions = builder.Configuration
             .GetSection("Jwt")
             .Get<JwtOptions>();
+
+        if (jwtOptions.Key == null)
+        {
+            throw new ArgumentException("The JWT key environment variable is not set");
+        }
+
+        if (jwtOptions.Issuer == null)
+        {
+            throw new ArgumentException("The JWT issuer environment variable is not set");
+        }
+
+        if (jwtOptions.Audience == null)
+        {
+            throw new ArgumentException("The JWT Audience environment variable is not set");
+        }
         
         var key = Encoding.UTF8.GetBytes(jwtOptions.Key);
 
