@@ -2,10 +2,12 @@ using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Personal_website.DB;
 using Personal_website.Services;
 using Personal_website.Models.Identity;
+using Personal_website.Options;
 
 namespace Personal_website;
 
@@ -14,6 +16,9 @@ public class Program
     public static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
+        
+        builder.Services.Configure<JwtOptions>(
+            builder.Configuration.GetSection("Jwt"));
         
         string? connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
         string? identityString = builder.Configuration.GetConnectionString("IdentityConnection");
@@ -41,14 +46,19 @@ public class Program
             .AddEntityFrameworkStores<AuthDbContext>()
             .AddDefaultTokenProviders();
         
-        var jwtKey = builder.Configuration["Jwt:Key"]
+        /*var jwtKey = builder.Configuration["Jwt:Key"]
             ??throw new ArgumentException("The JWT Key environment variable is not set");
         var jwtIssuer = builder.Configuration["Jwt:Issuer"]
             ??throw new ArgumentException("The JWT ISSUER environment variable is not set");
         var jwtAudience = builder.Configuration["Jwt:Audience"]
-            ??throw new ArgumentException("The JWT Audience environment variable is not set");
+            ??throw new ArgumentException("The JWT Audience environment variable is not set");*/
         
-        var key = Encoding.UTF8.GetBytes(jwtKey);
+        
+        var jwtOptions = builder.Configuration
+            .GetSection("Jwt")
+            .Get<JwtOptions>();
+        
+        var key = Encoding.UTF8.GetBytes(jwtOptions.Key);
 
         builder.Services.AddAuthentication(options =>
             {
@@ -65,8 +75,8 @@ public class Program
                     ValidateAudience = true,
                     ValidateLifetime = true,
                     ValidateIssuerSigningKey = true,
-                    ValidIssuer = jwtIssuer,
-                    ValidAudience = jwtAudience,
+                    ValidIssuer = jwtOptions.Issuer,
+                    ValidAudience = jwtOptions.Audience,
                     IssuerSigningKey = new SymmetricSecurityKey(key),
                     ClockSkew = TimeSpan.Zero
                 };

@@ -3,9 +3,11 @@ using System.Security.Claims;
 using System.Text;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Personal_website.DTO;
 using Personal_website.Models.Identity;
+using Personal_website.Options;
 
 namespace Personal_website.Controllers;
 
@@ -14,14 +16,14 @@ namespace Personal_website.Controllers;
 public class AuthController : ControllerBase
 {
     private readonly UserManager<User> _userManager;
-    private readonly IConfiguration _configuration;
+    private readonly JwtOptions _jwtOptions;
     private readonly SignInManager<User> _signInManager;
 
-    public AuthController(UserManager<User> userManager, SignInManager<User> signInManager, IConfiguration configuration)
+    public AuthController(UserManager<User> userManager, SignInManager<User> signInManager, IOptions<JwtOptions> jwtOptions)
     {
         _userManager = userManager;
         _signInManager = signInManager;
-        _configuration = configuration;
+        _jwtOptions = jwtOptions.Value;
     }
     
     [HttpPost("register")]
@@ -65,12 +67,12 @@ public class AuthController : ControllerBase
             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
         };
         
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]!));
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtOptions.Key));
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
         
         var token = new JwtSecurityToken(
-            issuer: _configuration["Jwt:Issuer"],
-            audience: _configuration["Jwt:Audience"],
+            issuer: _jwtOptions.Issuer,
+            audience: _jwtOptions.Audience,
             claims: claims,
             expires: DateTime.UtcNow.AddHours(1),
             signingCredentials: creds);
