@@ -23,6 +23,11 @@ public class Program
             throw new ArgumentException("The CONNECTION_STRING environment variable is not set");
         }
 
+        if (identityString == null)
+        {
+            throw new ArgumentException("The IDENTITY STRING environment variable is not set");
+        }
+
         // Add services to the container.
         builder.Services.AddControllers();
         
@@ -36,7 +41,14 @@ public class Program
             .AddEntityFrameworkStores<AuthDbContext>()
             .AddDefaultTokenProviders();
         
-        var key = Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!);
+        var jwtKey = builder.Configuration["Jwt:Key"]
+            ??throw new ArgumentException("The JWT Key environment variable is not set");
+        var jwtIssuer = builder.Configuration["Jwt:Issuer"]
+            ??throw new ArgumentException("The JWT ISSUER environment variable is not set");
+        var jwtAudience = builder.Configuration["Jwt:Audience"]
+            ??throw new ArgumentException("The JWT Audience environment variable is not set");
+        
+        var key = Encoding.UTF8.GetBytes(jwtKey);
 
         builder.Services.AddAuthentication(options =>
             {
@@ -53,8 +65,8 @@ public class Program
                     ValidateAudience = true,
                     ValidateLifetime = true,
                     ValidateIssuerSigningKey = true,
-                    ValidIssuer = builder.Configuration["Jwt:Issuer"],
-                    ValidAudience = builder.Configuration["Jwt:Audience"],
+                    ValidIssuer = jwtIssuer,
+                    ValidAudience = jwtAudience,
                     IssuerSigningKey = new SymmetricSecurityKey(key),
                     ClockSkew = TimeSpan.Zero
                 };
@@ -80,6 +92,7 @@ public class Program
         }
 
         app.UseHttpsRedirection();
+        app.UseAuthentication();
         app.UseAuthorization();
         
         app.MapControllers();

@@ -1,7 +1,11 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace Personal_website.DTO;
 
 public class LoginDto
 {
-    public string name { get; set; }
-    public string password { get; set; }
+    [Required]
+    public string Name { get; set; }
+    [Required]
+    public string Password { get; set; }
 }

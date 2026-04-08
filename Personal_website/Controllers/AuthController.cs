@@ -15,18 +15,20 @@ public class AuthController : ControllerBase
 {
     private readonly UserManager<User> _userManager;
     private readonly IConfiguration _configuration;
+    private readonly SignInManager<User> _signInManager;
 
-    public AuthController(UserManager<User> userManager, IConfiguration configuration)
+    public AuthController(UserManager<User> userManager, SignInManager<User> signInManager, IConfiguration configuration)
     {
         _userManager = userManager;
+        _signInManager = signInManager;
         _configuration = configuration;
     }
     
     [HttpPost("register")]
     public async Task<IActionResult> Register(LoginDto dto)
     {
-        var user = new User { UserName = dto.name };
-        var result = await _userManager.CreateAsync(user, dto.password);
+        var user = new User { UserName = dto.Name };
+        var result = await _userManager.CreateAsync(user, dto.Password);
 
         if (!result.Succeeded) return BadRequest(result.Errors);
 
@@ -36,8 +38,16 @@ public class AuthController : ControllerBase
     [HttpPost("login")]
     public async Task<IActionResult> Login(LoginDto loginDto)
     {
-        User? user = await _userManager.FindByNameAsync(loginDto.name);
-        if (user == null || !await _userManager.CheckPasswordAsync(user, loginDto.password))
+        User? user = await _userManager.FindByNameAsync(loginDto.Name);
+
+        if (user == null)
+        {
+            return Unauthorized();
+        }
+        
+        var signInResult = await _signInManager.CheckPasswordSignInAsync(user, loginDto.Password, false);
+
+        if (!signInResult.Succeeded)
         {
             return Unauthorized();
         }
