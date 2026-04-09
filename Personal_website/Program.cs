@@ -2,7 +2,6 @@ using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Personal_website.DB;
 using Personal_website.Services;
@@ -23,12 +22,12 @@ public class Program
         string? connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
         string? identityString = builder.Configuration.GetConnectionString("IdentityConnection");
 
-        if (connectionString == null)
+        if (string.IsNullOrWhiteSpace(connectionString))
         {
             throw new ArgumentException("The CONNECTION_STRING environment variable is not set");
         }
 
-        if (identityString == null)
+        if (string.IsNullOrWhiteSpace(identityString))
         {
             throw new ArgumentException("The IDENTITY STRING environment variable is not set");
         }
@@ -48,19 +47,20 @@ public class Program
         
         var jwtOptions = builder.Configuration
             .GetSection("Jwt")
-            .Get<JwtOptions>();
+            .Get<JwtOptions>()
+            ??throw new ArgumentException("The JWT environment variable is not set");
 
-        if (jwtOptions.Key == null)
+        if (string.IsNullOrWhiteSpace(jwtOptions.Key))
         {
             throw new ArgumentException("The JWT key environment variable is not set");
         }
 
-        if (jwtOptions.Issuer == null)
+        if (string.IsNullOrWhiteSpace(jwtOptions.Issuer))
         {
             throw new ArgumentException("The JWT issuer environment variable is not set");
         }
 
-        if (jwtOptions.Audience == null)
+        if (string.IsNullOrWhiteSpace(jwtOptions.Audience))
         {
             throw new ArgumentException("The JWT Audience environment variable is not set");
         }

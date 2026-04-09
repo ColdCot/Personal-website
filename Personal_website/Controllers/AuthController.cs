@@ -26,6 +26,7 @@ public class AuthController : ControllerBase
         _jwtOptions = jwtOptions.Value;
     }
     
+    //TODO: Restrict after testing and make it create users from seeding data or created by existing user
     [HttpPost("register")]
     public async Task<IActionResult> Register(LoginDto dto)
     {
