@@ -106,7 +106,7 @@ public class Program
             var userManager = services.GetRequiredService<UserManager<User>>();
             var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
 
-            Seeding.SeedAdminUser(userManager, roleManager, builder.Configuration).GetAwaiter();
+            Seeding.SeedAdminUser(userManager, roleManager, builder.Configuration).GetAwaiter().GetResult();
         }
 
         // Configure the HTTP request pipeline.

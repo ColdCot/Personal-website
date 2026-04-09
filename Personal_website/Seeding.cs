@@ -8,15 +8,15 @@ public class Seeding
     public static async Task SeedAdminUser(UserManager<User> userManager, RoleManager<IdentityRole> roleManager, IConfiguration configuration)
     {
         // Check if any admin user exists
-        var Users = userManager.Users;
-        if (Users.Any())
+        var users = userManager.Users;
+        if (users.Any())
         {
             return; 
         }
 
         // Get admin password from environment variable or throw an exception
         var adminPassword = configuration["ADMIN_PASSWORD"]
-            ?? throw new Exception("Cant find admin password for seeding");
+            ?? throw new Exception("Can't find admin password for seeding");
 
         // Create default admin user
         var adminUser = new User
