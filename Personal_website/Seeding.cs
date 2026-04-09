@@ -14,7 +14,7 @@ public class Seeding
             return; 
         }
 
-        // Get admin password from environment variable or throw an exeption
+        // Get admin password from environment variable or throw an exception
         var adminPassword = configuration["ADMIN_PASSWORD"]
             ?? throw new Exception("Cant find admin password for seeding");
 
