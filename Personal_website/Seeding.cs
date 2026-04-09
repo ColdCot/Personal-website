@@ -15,8 +15,11 @@ public static class Seeding
         }
 
         // Get admin password from environment variable or throw an exception
-        var adminPassword = configuration["ADMIN_PASSWORD"]
-            ?? throw new Exception("Can't find admin password for seeding");
+        var adminPassword = configuration["ADMIN_PASSWORD"];
+        if (string.IsNullOrEmpty(adminPassword))
+        {
+            throw new ArgumentException("Admin password is missing or invalid");
+        }
 
         // Create default admin user
         var adminUser = new User
