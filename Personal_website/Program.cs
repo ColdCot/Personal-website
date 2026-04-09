@@ -98,17 +98,16 @@ public class Program
         builder.Services.AddSwaggerGen(); 
 
         var app = builder.Build();
-
-        // Seed initial admin user
-        //TODO: Uncomment before deployment
-        /*using (var scope = app.Services.CreateScope())
+        
+        //seed first user
+        using (var scope = app.Services.CreateScope())
         {
             var services = scope.ServiceProvider;
             var userManager = services.GetRequiredService<UserManager<User>>();
             var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
 
-            SeedAdminUser(userManager, roleManager, builder.Configuration).Wait();
-        }*/
+            Seeding.SeedAdminUser(userManager, roleManager, builder.Configuration).Wait();
+        }
 
         // Configure the HTTP request pipeline.
         if (app.Environment.IsDevelopment())

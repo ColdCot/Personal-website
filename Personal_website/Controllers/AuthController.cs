@@ -27,7 +27,7 @@ public class AuthController : ControllerBase
         _jwtOptions = jwtOptions.Value;
     }
     
-    [Authorize(Roles = "Admin")]
+    [Authorize]
     [HttpPost("register")]
     public async Task<IActionResult> Register(LoginDto dto)
     {
