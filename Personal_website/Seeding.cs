@@ -3,13 +3,13 @@ using Personal_website.Models.Identity;
 
 namespace Personal_website;
 
-public class Seeding
+public static class Seeding
 {
     public static async Task SeedAdminUser(UserManager<User> userManager, RoleManager<IdentityRole> roleManager, IConfiguration configuration)
     {
         // Check if any admin user exists
-        var users = userManager.Users;
-        if (users.Any())
+        var existingUser = await userManager.FindByNameAsync("ColdCot");
+        if (existingUser != null)
         {
             return; 
         }
