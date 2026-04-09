@@ -1,4 +1,4 @@
-namespace Personal_website.Models;
+namespace Personal_website.DTO;
 
 public class MessageRequest
 {

@@ -1,31 +1,37 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Personal_website.DTO;
 using Personal_website.Models;
 using Personal_website.Services;
 
 namespace Personal_website.Controllers;
 
 [ApiController]
-[Route("[controller]")]
+[Route("api/[controller]")]
 public class MessagesController(IMessageService messageService) : ControllerBase
 {
+    [Authorize]
     [HttpGet]
     public ActionResult<IEnumerable<Message>> GetAll()
     {
         return Ok(messageService.GetAll());
     }
 
+    [Authorize]
     [HttpGet("{id}")]
     public ActionResult<Message> GetById(int id)
     {
         return Ok(messageService.GetById(id));
     }
 
+    [Authorize]
     [HttpGet("email")]
     public ActionResult<IEnumerable<Message>> GetByEmail(string email)
     {
         return Ok(messageService.GetByEmail(email));
     }
     
+    [Authorize]
     [HttpGet("name")]
     public ActionResult<IEnumerable<Message>> GetByName(string name)
     {
@@ -44,6 +50,7 @@ public class MessagesController(IMessageService messageService) : ControllerBase
         return Ok(newMessage);
     }
 
+    [Authorize]
     [HttpDelete("{id}")]
     public IActionResult Delete(int id)
     {
