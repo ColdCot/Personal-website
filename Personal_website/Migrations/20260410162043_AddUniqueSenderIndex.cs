@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
@@ -7,7 +7,9 @@ namespace Personal_website.Migrations
     /// <inheritdoc />
     public partial class AddUniqueSenderIndex : Migration
     {
-        /// <inheritdoc />
+        /// <summary>
+        /// Applies schema changes to the Senders table: limits Name and Email to 50 characters (non-nullable) and adds a unique composite index on Name and Email.
+        /// </summary>
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AlterColumn<string>(

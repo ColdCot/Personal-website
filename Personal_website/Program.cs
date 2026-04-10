@@ -12,6 +12,11 @@ namespace Personal_website;
 
 public class Program
 {
+    /// <summary>
+    /// Configures and runs the ASP.NET Core web application: registers services (controllers, DbContexts, Identity, authentication/authorization, scoped application services, and OpenAPI), validates required configuration (connection strings and JWT settings), seeds an initial admin user, configures the HTTP request pipeline, and starts the server.
+    /// </summary>
+    /// <param name="args">Command-line arguments passed to the application.</param>
+    /// <exception cref="ArgumentException">Thrown when required configuration is missing: DefaultConnection, IdentityConnection, or any required JwtOptions field (Key, Issuer, Audience).</exception>
     public static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
