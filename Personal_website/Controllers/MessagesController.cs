@@ -14,7 +14,7 @@ public class MessagesController(IMessageService messageService, ILogger<Messages
     /// Retrieves all message entities.
     /// </summary>
     /// <returns>An IEnumerable of all Message objects.</returns>
-    [Authorize]
+    //[Authorize]
     [HttpGet]
     public async Task<ActionResult<IEnumerable<Message>>> GetAllAsync()
     {
@@ -26,7 +26,7 @@ public class MessagesController(IMessageService messageService, ILogger<Messages
     /// </summary>
     /// <param name="id">The identifier of the message to retrieve.</param>
     /// <returns>The requested <see cref="Message"/> when found; otherwise a 404 NotFound result.</returns>
-    [Authorize]
+    //[Authorize]
     [HttpGet("{id}")]
     public async Task<ActionResult<Message>> GetByIdAsync([FromRoute]int id)
     {
@@ -39,7 +39,7 @@ public class MessagesController(IMessageService messageService, ILogger<Messages
     /// </summary>
     /// <param name="email">The sender email used to filter messages.</param>
     /// <returns>A collection of <see cref="Message"/> objects matching the provided email.</returns>
-    [Authorize]
+    //[Authorize]
     [HttpGet("email")]
     public async Task<ActionResult<IEnumerable<Message>>> GetByEmailAsync([FromQuery]string email)
     {
@@ -51,7 +51,7 @@ public class MessagesController(IMessageService messageService, ILogger<Messages
     /// </summary>
     /// <param name="name">The name to filter messages by.</param>
     /// <returns>An <see cref="IEnumerable{Message}"/> containing messages that match the provided name.</returns>
-    [Authorize]
+    //[Authorize]
     [HttpGet("name")]
     public async Task<ActionResult<IEnumerable<Message>>> GetByNameAsync([FromQuery]string name)
     {
@@ -89,7 +89,7 @@ public class MessagesController(IMessageService messageService, ILogger<Messages
     /// </summary>
     /// <param name="id">The identifier of the message to delete.</param>
     /// <returns>`200 OK` if the message was deleted; `404 NotFound` if no message with the specified id exists.</returns>
-    [Authorize]
+    //[Authorize]
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteAsync([FromRoute]int id)
     {

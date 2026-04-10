@@ -100,6 +100,7 @@ public class Program
         builder.Services.AddAuthorization();
         
         builder.Services.AddScoped<IMessageService, MessageService>();
+        builder.Services.AddScoped<ISenderService, SenderService>();
         
         builder.Services.AddOpenApi();
         builder.Services.AddEndpointsApiExplorer(); 

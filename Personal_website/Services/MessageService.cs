@@ -92,7 +92,17 @@ public class MessageService(WebsiteDbContext context) : IMessageService
         }
         
         context.Messages.Remove(result);
+        
         await context.SaveChangesAsync();
+        
+        //removing senders with no messages
+        if (!await context.Messages.Where(m => m.senderId == result.senderId).AnyAsync())
+        {
+            var sender = await context.Senders.FirstOrDefaultAsync(s => s.Id == result.senderId);
+            if (sender != null) context.Senders.Remove(sender);
+            await context.SaveChangesAsync();
+        }
+        
         return result;
     }
 }
