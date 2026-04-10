@@ -8,6 +8,6 @@ public class SenderService(WebsiteDbContext context) : ISenderService
 {
     public async Task<IEnumerable<Sender>> GetAllAsync()
     {
-        return await context.Senders.ToListAsync();
+        return await context.Senders.AsNoTracking().ToListAsync();
     }
 }
