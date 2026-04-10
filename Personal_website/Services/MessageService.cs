@@ -86,23 +86,20 @@ public class MessageService(WebsiteDbContext context) : IMessageService
     public async Task<Message?> DeleteAsync(int id)
     {
         Message? result = await GetByIdAsync(id);
-        if (result == null)
-        {
-            return result;
-        }
+        if (result == null) return null;
+            
+        await using var transaction = await context.Database.BeginTransactionAsync();
         
         context.Messages.Remove(result);
-        
         await context.SaveChangesAsync();
         
         //removing senders with no messages
-        if (!await context.Messages.Where(m => m.senderId == result.senderId).AnyAsync())
-        {
-            var sender = await context.Senders.FirstOrDefaultAsync(s => s.Id == result.senderId);
-            if (sender != null) context.Senders.Remove(sender);
-            await context.SaveChangesAsync();
-        }
+        await context.Senders
+            .Where(s => s.Id == result.senderId &&
+                        !context.Messages.Any(m => m.senderId == s.Id))
+            .ExecuteDeleteAsync();
         
+        await transaction.CommitAsync();    
         return result;
     }
 }
