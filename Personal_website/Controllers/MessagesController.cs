@@ -10,51 +10,52 @@ namespace Personal_website.Controllers;
 [Route("api/[controller]")]
 public class MessagesController(IMessageService messageService) : ControllerBase
 {
-    [Authorize]
+    //[Authorize]
     [HttpGet]
-    public ActionResult<IEnumerable<Message>> GetAll()
+    public async Task<ActionResult<IEnumerable<Message>>> GetAllAsync()
     {
-        return Ok(messageService.GetAll());
+        return Ok(await messageService.GetAllAsync());
     }
 
-    [Authorize]
+    //[Authorize]
     [HttpGet("{id}")]
-    public ActionResult<Message> GetById(int id)
+    public async Task<ActionResult<Message>> GetByIdAsync(int id)
     {
-        return Ok(messageService.GetById(id));
+        var result = await messageService.GetByIdAsync(id);
+        return result != null ? Ok(result) : NotFound();
     }
 
-    [Authorize]
+    //[Authorize]
     [HttpGet("email")]
-    public ActionResult<IEnumerable<Message>> GetByEmail(string email)
+    public async Task<ActionResult<IEnumerable<Message>>> GetByEmailAsync([FromQuery]string email)
     {
-        return Ok(messageService.GetByEmail(email));
+        return Ok(await messageService.GetByEmailAsync(email));
     }
     
-    [Authorize]
+    //[Authorize]
     [HttpGet("name")]
-    public ActionResult<IEnumerable<Message>> GetByName(string name)
+    public async Task<ActionResult<IEnumerable<Message>>> GetByName([FromQuery]string name)
     {
-        return Ok(messageService.GetByName(name));
+        return Ok(await messageService.GetByNameAsync(name));
     }
 
     [HttpPost]
-    public ActionResult<Message> Create([FromBody] MessageRequest request)
+    public async Task<ActionResult<Message>> CreateAsync([FromBody] MessageRequestDto requestDto)
     {
-        var newMessage = messageService.Create(
-            request.SenderName, 
-            request.SenderEmail, 
-            request.Text
+        var newMessage = await messageService.CreateAsync(
+            requestDto.SenderName, 
+            requestDto.SenderEmail, 
+            requestDto.Text
         );
 
         return Ok(newMessage);
     }
 
-    [Authorize]
+    //[Authorize]
     [HttpDelete("{id}")]
-    public IActionResult Delete(int id)
+    public async Task<IActionResult> Delete(int id)
     {
-        var result = messageService.Delete(id);
+        var result = await messageService.DeleteAsync(id);
         if (result == null)
         {
             return NotFound();

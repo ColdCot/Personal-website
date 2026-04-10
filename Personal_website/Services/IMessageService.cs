@@ -4,10 +4,10 @@ namespace Personal_website.Services;
 
 public interface IMessageService
 {
-    public IEnumerable<Message> GetAll();
-    public Message? GetById(int id);
-    public IEnumerable<Message> GetByEmail(string email);
-    public IEnumerable<Message> GetByName(string name);
-    public Message Create(string senderName, string senderEmail, string text);
-    public Message? Delete(int id);
+    public Task<IEnumerable<Message>> GetAllAsync();
+    public Task<Message?> GetByIdAsync(int id);
+    public Task<IEnumerable<Message>> GetByEmailAsync(string email);
+    public Task<IEnumerable<Message>> GetByNameAsync(string name);
+    public Task<Message> CreateAsync(string senderName, string senderEmail, string text);
+    public Task<Message?> DeleteAsync(int id);
 }

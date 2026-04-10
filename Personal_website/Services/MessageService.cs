@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using Personal_website.DB;
 using Personal_website.Models;
 
@@ -5,45 +6,43 @@ namespace Personal_website.Services;
 
 public class MessageService(WebsiteDbContext context) : IMessageService
 {
-    public IEnumerable<Message> GetAll()
+    public async Task<IEnumerable<Message>> GetAllAsync()
     {
-        return context.Messages;
+        return await context.Messages.ToListAsync();
     }
 
-    public Message? GetById(int id)
+    public Task<Message?> GetByIdAsync(int id)
     {
-        return context.Messages.FirstOrDefault(m => m.id == id);
+        return context.Messages.FirstOrDefaultAsync(m => m.id == id);
     }
 
-    public IEnumerable<Message> GetByEmail(string email)
+    public async Task<IEnumerable<Message>> GetByEmailAsync(string email)
     {
         var senders = context.Senders.Where(s => s.Email == email).Select(s => s.Id);
 
-        if (!senders.Any())
+        if (!await senders.AnyAsync())
         {
             return Enumerable.Empty<Message>();
         }
-        
-        IEnumerable<Message> messages = context.Messages.Where(m => senders.Contains(m.senderId));
-        return messages;
+
+        return await context.Messages.Where(m => senders.Contains(m.senderId)).ToListAsync();
     }
 
-    public IEnumerable<Message> GetByName(string name)
+    public async Task<IEnumerable<Message>> GetByNameAsync(string name)
     {
         var senders = context.Senders.Where(s => s.Name == name).Select(s => s.Id);
 
-        if (!senders.Any())
+        if (!await senders.AnyAsync())
         {
             return Enumerable.Empty<Message>();
         }
         
-        IEnumerable<Message> messages = context.Messages.Where(m => senders.Contains(m.senderId));
-        return messages;
+        return await context.Messages.Where(m => senders.Contains(m.senderId)).ToListAsync();
     }
 
-    public Message Create(string senderName, string senderEmail, string text)
+    public async Task<Message> CreateAsync(string senderName, string senderEmail, string text)
     {
-        Sender? sender = context.Senders.FirstOrDefault(s => s.Name == senderName && s.Email == senderEmail);
+        Sender? sender = await context.Senders.FirstOrDefaultAsync(s => s.Name == senderName && s.Email == senderEmail);
         if (sender == null)
         {
             sender = new Sender
@@ -54,7 +53,7 @@ public class MessageService(WebsiteDbContext context) : IMessageService
             
             context.Senders.Add(sender);
             
-            context.SaveChanges();
+            await context.SaveChangesAsync();
         }
 
         Message message = new Message
@@ -64,21 +63,21 @@ public class MessageService(WebsiteDbContext context) : IMessageService
         };
         
         context.Messages.Add(message);
-        context.SaveChanges();
+        await context.SaveChangesAsync();
         
         return message;
     }
 
-    public Message? Delete(int id)
+    public async Task<Message?> DeleteAsync(int id)
     {
-        Message? result = GetById(id);
+        Message? result = await GetByIdAsync(id);
         if (result == null)
         {
             return result;
         }
         
         context.Messages.Remove(result);
-        context.SaveChanges();
+        await context.SaveChangesAsync();
         return result;
     }
 }
