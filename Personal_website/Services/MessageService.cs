@@ -48,7 +48,19 @@ public class MessageService(WebsiteDbContext context) : IMessageService
 
                 context.Senders.Add(sender);
 
-                await context.SaveChangesAsync();
+                try
+                {
+                    await context.SaveChangesAsync();
+                }
+                catch (DbUpdateException)
+                {
+                    context.Entry(sender).State = EntityState.Detached;
+                    
+                    sender = await context.Senders.AsNoTracking()
+                        .FirstOrDefaultAsync(s => s.Name == senderName && s.Email == senderEmail);
+                
+                    if (sender == null) throw;
+                }
             }
 
             Message message = new Message

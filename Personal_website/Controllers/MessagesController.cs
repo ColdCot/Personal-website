@@ -9,7 +9,7 @@ namespace Personal_website.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class MessagesController(IMessageService messageService) : ControllerBase
+public class MessagesController(IMessageService messageService, ILogger logger) : ControllerBase
 {
     [Authorize]
     [HttpGet]
@@ -53,9 +53,11 @@ public class MessagesController(IMessageService messageService) : ControllerBase
 
             return Ok(newMessage);
         }
-        catch (DbUpdateException)
+        catch (Exception ex)
         {
-            return Conflict("Failed to create message");
+            logger.LogError(ex.Message);
+            
+            return StatusCode(StatusCodes.Status500InternalServerError, "Internal server error");
         }
     }
 
