@@ -10,14 +10,14 @@ namespace Personal_website.Controllers;
 [Route("api/[controller]")]
 public class MessagesController(IMessageService messageService) : ControllerBase
 {
-    //[Authorize]
+    [Authorize]
     [HttpGet]
     public async Task<ActionResult<IEnumerable<Message>>> GetAllAsync()
     {
         return Ok(await messageService.GetAllAsync());
     }
 
-    //[Authorize]
+    [Authorize]
     [HttpGet("{id}")]
     public async Task<ActionResult<Message>> GetByIdAsync(int id)
     {
@@ -25,14 +25,14 @@ public class MessagesController(IMessageService messageService) : ControllerBase
         return result != null ? Ok(result) : NotFound();
     }
 
-    //[Authorize]
+    [Authorize]
     [HttpGet("email")]
     public async Task<ActionResult<IEnumerable<Message>>> GetByEmailAsync([FromQuery]string email)
     {
         return Ok(await messageService.GetByEmailAsync(email));
     }
     
-    //[Authorize]
+    [Authorize]
     [HttpGet("name")]
     public async Task<ActionResult<IEnumerable<Message>>> GetByName([FromQuery]string name)
     {
@@ -51,7 +51,7 @@ public class MessagesController(IMessageService messageService) : ControllerBase
         return Ok(newMessage);
     }
 
-    //[Authorize]
+    [Authorize]
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
