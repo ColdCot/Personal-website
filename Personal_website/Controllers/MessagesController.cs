@@ -85,7 +85,7 @@ public class MessagesController(IMessageService messageService, ILogger<Messages
     }
 
     /// <summary>
-    /// Deletes the message with the specified identifier and deletes sender if they have no messages left
+    /// Deletes the message with the specified identifier and deletes the sender if they have no messages left.
     /// </summary>
     /// <param name="id">The identifier of the message to delete.</param>
     /// <returns>`200 OK` if the message was deleted; `404 NotFound` if no message with the specified id exists; `500 Internal Server Error` if message deletion fails.</returns>
