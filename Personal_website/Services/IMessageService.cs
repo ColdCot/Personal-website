@@ -8,7 +8,7 @@ public interface IMessageService
 /// Retrieves all stored messages.
 /// </summary>
 /// <returns>An enumerable containing every <see cref="Message"/> currently stored.</returns>
-public Task<IEnumerable<Message>> GetAllAsync();
+public Task<IEnumerable<Message>> GetAllAsync(); 
     /// <summary>
 /// Retrieves a message by its numeric identifier.
 /// </summary>

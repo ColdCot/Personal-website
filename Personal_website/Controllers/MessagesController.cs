@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Personal_website.DTO;
 using Personal_website.Models;
 using Personal_website.Services;
@@ -75,7 +74,7 @@ public class MessagesController(IMessageService messageService, ILogger<Messages
                 requestDto.Text
             );
 
-            return CreatedAtAction("GetByIdAsync", new { id = newMessage.id }, newMessage);
+            return CreatedAtAction(nameof(GetByIdAsync), new { id = newMessage.id }, newMessage);
         }
         catch (Exception ex)
         {
