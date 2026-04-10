@@ -1,3 +1,4 @@
+using System.Data;
 using Microsoft.EntityFrameworkCore;
 using Personal_website.DB;
 using Personal_website.Models;
@@ -86,13 +87,29 @@ public class MessageService(WebsiteDbContext context) : IMessageService
     public async Task<Message?> DeleteAsync(int id)
     {
         Message? result = await GetByIdAsync(id);
-        if (result == null)
+        if (result == null) return null;
+            
+        await using var transaction = await context.Database.BeginTransactionAsync(IsolationLevel.Serializable);
+
+        try
         {
-            return result;
+            context.Messages.Remove(result);
+            await context.SaveChangesAsync();
+
+            //removing senders with no messages
+            await context.Senders
+                .Where(s => s.Id == result.senderId &&
+                            !context.Messages.Any(m => m.senderId == s.Id))
+                .ExecuteDeleteAsync();
+
+            await transaction.CommitAsync();
         }
-        
-        context.Messages.Remove(result);
-        await context.SaveChangesAsync();
+        catch (DbUpdateException)
+        {
+            await transaction.RollbackAsync();
+            throw;
+        }
+
         return result;
     }
 }

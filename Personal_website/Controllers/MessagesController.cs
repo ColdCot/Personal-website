@@ -85,15 +85,26 @@ public class MessagesController(IMessageService messageService, ILogger<Messages
     }
 
     /// <summary>
-    /// Deletes the message with the specified identifier.
+    /// Deletes the message with the specified identifier and deletes the sender if they have no messages left.
     /// </summary>
     /// <param name="id">The identifier of the message to delete.</param>
-    /// <returns>`200 OK` if the message was deleted; `404 NotFound` if no message with the specified id exists.</returns>
+    /// <returns>`200 OK` if the message was deleted; `404 NotFound` if no message with the specified id exists; `500 Internal Server Error` if message deletion fails.</returns>
     [Authorize]
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteAsync([FromRoute]int id)
     {
-        var result = await messageService.DeleteAsync(id);
+        Message? result;
+        try
+        {
+            result = await messageService.DeleteAsync(id);
+        }
+        catch(Exception ex)
+        {
+            logger.LogError(ex, "Failed to delete message");
+            
+            return StatusCode(StatusCodes.Status500InternalServerError, "Internal server error");
+        }
+
         if (result == null)
         {
             return NotFound();
