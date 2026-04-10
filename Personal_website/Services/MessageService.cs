@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using Personal_website.DB;
 using Personal_website.Models;
 
@@ -5,80 +6,93 @@ namespace Personal_website.Services;
 
 public class MessageService(WebsiteDbContext context) : IMessageService
 {
-    public IEnumerable<Message> GetAll()
+    public async Task<IEnumerable<Message>> GetAllAsync()
     {
-        return context.Messages;
+        return await context.Messages.ToListAsync();
     }
 
-    public Message? GetById(int id)
+    public async Task<Message?> GetByIdAsync(int id)
     {
-        return context.Messages.FirstOrDefault(m => m.id == id);
+        return await context.Messages.FirstOrDefaultAsync(m => m.id == id);
     }
 
-    public IEnumerable<Message> GetByEmail(string email)
+    public async Task<IEnumerable<Message>> GetByEmailAsync(string email)
     {
         var senders = context.Senders.Where(s => s.Email == email).Select(s => s.Id);
 
-        if (!senders.Any())
-        {
-            return Enumerable.Empty<Message>();
-        }
-        
-        IEnumerable<Message> messages = context.Messages.Where(m => senders.Contains(m.senderId));
-        return messages;
+        return await context.Messages.Where(m => senders.Contains(m.senderId)).ToListAsync();
     }
 
-    public IEnumerable<Message> GetByName(string name)
+    public async Task<IEnumerable<Message>> GetByNameAsync(string name)
     {
         var senders = context.Senders.Where(s => s.Name == name).Select(s => s.Id);
-
-        if (!senders.Any())
-        {
-            return Enumerable.Empty<Message>();
-        }
         
-        IEnumerable<Message> messages = context.Messages.Where(m => senders.Contains(m.senderId));
-        return messages;
+        return await context.Messages.Where(m => senders.Contains(m.senderId)).ToListAsync();
     }
 
-    public Message Create(string senderName, string senderEmail, string text)
+    public async Task<Message> CreateAsync(string senderName, string senderEmail, string text)
     {
-        Sender? sender = context.Senders.FirstOrDefault(s => s.Name == senderName && s.Email == senderEmail);
-        if (sender == null)
+        await using var transaction = await context.Database.BeginTransactionAsync();
+        
+        try
         {
-            sender = new Sender
+            Sender? sender =
+                await context.Senders.FirstOrDefaultAsync(s => s.Name == senderName && s.Email == senderEmail);
+            if (sender == null)
             {
-                Name = senderName,
-                Email = senderEmail
-            };
-            
-            context.Senders.Add(sender);
-            
-            context.SaveChanges();
-        }
+                sender = new Sender
+                {
+                    Name = senderName,
+                    Email = senderEmail
+                };
 
-        Message message = new Message
+                context.Senders.Add(sender);
+
+                try
+                {
+                    await context.SaveChangesAsync();
+                }
+                catch (DbUpdateException)
+                {
+                    context.Entry(sender).State = EntityState.Detached;
+                    
+                    sender = await context.Senders.AsNoTracking()
+                        .FirstOrDefaultAsync(s => s.Name == senderName && s.Email == senderEmail);
+                
+                    if (sender == null) throw;
+                }
+            }
+
+            Message message = new Message
+            {
+                senderId = sender.Id,
+                text = text,
+            };
+
+            context.Messages.Add(message);
+            await context.SaveChangesAsync();
+            
+            await transaction.CommitAsync();
+
+            return message;
+        }
+        catch(DbUpdateException)
         {
-            senderId = sender.Id,
-            text = text,
-        };
-        
-        context.Messages.Add(message);
-        context.SaveChanges();
-        
-        return message;
+            await transaction.RollbackAsync();
+            throw;
+        }
     }
 
-    public Message? Delete(int id)
+    public async Task<Message?> DeleteAsync(int id)
     {
-        Message? result = GetById(id);
+        Message? result = await GetByIdAsync(id);
         if (result == null)
         {
             return result;
         }
         
         context.Messages.Remove(result);
-        context.SaveChanges();
+        await context.SaveChangesAsync();
         return result;
     }
 }
