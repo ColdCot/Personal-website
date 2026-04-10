@@ -20,7 +20,7 @@ public class MessagesController(IMessageService messageService) : ControllerBase
 
     [Authorize]
     [HttpGet("{id}")]
-    public async Task<ActionResult<Message>> GetByIdAsync([FromQuery]int id)
+    public async Task<ActionResult<Message>> GetByIdAsync([FromRoute]int id)
     {
         var result = await messageService.GetByIdAsync(id);
         return result != null ? Ok(result) : NotFound();
@@ -61,7 +61,7 @@ public class MessagesController(IMessageService messageService) : ControllerBase
 
     [Authorize]
     [HttpDelete("{id}")]
-    public async Task<IActionResult> DeleteAsync([FromQuery]int id)
+    public async Task<IActionResult> DeleteAsync([FromRoute]int id)
     {
         var result = await messageService.DeleteAsync(id);
         if (result == null)

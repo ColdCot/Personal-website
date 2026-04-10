@@ -11,9 +11,9 @@ public class MessageService(WebsiteDbContext context) : IMessageService
         return await context.Messages.ToListAsync();
     }
 
-    public Task<Message?> GetByIdAsync(int id)
+    public async Task<Message?> GetByIdAsync(int id)
     {
-        return context.Messages.FirstOrDefaultAsync(m => m.id == id);
+        return await context.Messages.FirstOrDefaultAsync(m => m.id == id);
     }
 
     public async Task<IEnumerable<Message>> GetByEmailAsync(string email)
