@@ -106,6 +106,7 @@ public class MessageService(WebsiteDbContext context) : IMessageService
         catch (DbUpdateException)
         {
             await transaction.RollbackAsync();
+            throw;
         }
 
         return result;
