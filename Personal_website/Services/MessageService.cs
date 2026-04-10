@@ -1,3 +1,4 @@
+using System.Data;
 using Microsoft.EntityFrameworkCore;
 using Personal_website.DB;
 using Personal_website.Models;
@@ -88,7 +89,7 @@ public class MessageService(WebsiteDbContext context) : IMessageService
         Message? result = await GetByIdAsync(id);
         if (result == null) return null;
             
-        await using var transaction = await context.Database.BeginTransactionAsync();
+        await using var transaction = await context.Database.BeginTransactionAsync(IsolationLevel.Serializable);
 
         try
         {
