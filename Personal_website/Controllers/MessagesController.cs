@@ -93,7 +93,18 @@ public class MessagesController(IMessageService messageService, ILogger<Messages
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteAsync([FromRoute]int id)
     {
-        var result = await messageService.DeleteAsync(id);
+        Message? result;
+        try
+        {
+            result = await messageService.DeleteAsync(id);
+        }
+        catch(Exception ex)
+        {
+            logger.LogError(ex, "Failed to delete message");
+            
+            return StatusCode(StatusCodes.Status500InternalServerError, "Internal server error");
+        }
+
         if (result == null)
         {
             return NotFound();

@@ -89,17 +89,25 @@ public class MessageService(WebsiteDbContext context) : IMessageService
         if (result == null) return null;
             
         await using var transaction = await context.Database.BeginTransactionAsync();
-        
-        context.Messages.Remove(result);
-        await context.SaveChangesAsync();
-        
-        //removing senders with no messages
-        await context.Senders
-            .Where(s => s.Id == result.senderId &&
-                        !context.Messages.Any(m => m.senderId == s.Id))
-            .ExecuteDeleteAsync();
-        
-        await transaction.CommitAsync();    
+
+        try
+        {
+            context.Messages.Remove(result);
+            await context.SaveChangesAsync();
+
+            //removing senders with no messages
+            await context.Senders
+                .Where(s => s.Id == result.senderId &&
+                            !context.Messages.Any(m => m.senderId == s.Id))
+                .ExecuteDeleteAsync();
+
+            await transaction.CommitAsync();
+        }
+        catch (DbUpdateException)
+        {
+            await transaction.RollbackAsync();
+        }
+
         return result;
     }
 }
