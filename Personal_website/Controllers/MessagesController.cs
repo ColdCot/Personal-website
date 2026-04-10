@@ -9,7 +9,7 @@ namespace Personal_website.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class MessagesController(IMessageService messageService, ILogger logger) : ControllerBase
+public class MessagesController(IMessageService messageService, ILogger<MessagesController> logger) : ControllerBase
 {
     [Authorize]
     [HttpGet]
@@ -51,7 +51,7 @@ public class MessagesController(IMessageService messageService, ILogger logger) 
                 requestDto.Text
             );
 
-            return Ok(newMessage);
+            return CreatedAtAction("GetByIdAsync", new { id = newMessage.id }, newMessage);
         }
         catch (Exception ex)
         {
