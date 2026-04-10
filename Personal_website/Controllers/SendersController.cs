@@ -9,7 +9,11 @@ namespace Personal_website.Controllers;
 [Route("api/[controller]")]
 public class SendersController(ISenderService senderService) : ControllerBase
 {
-    //[Authorize]
+    /// <summary>
+    /// Retrieves all Sender entities
+    /// </summary>
+    /// <returns>An IEnumerable of all Sender objects</returns>
+    [Authorize]
     [HttpGet]
     public async Task<ActionResult<IEnumerable<Sender>>> GetAllAsync()
     {
