@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Personal_website.DTO;
 using Personal_website.Models;
 using Personal_website.Services;
@@ -19,7 +20,7 @@ public class MessagesController(IMessageService messageService) : ControllerBase
 
     [Authorize]
     [HttpGet("{id}")]
-    public async Task<ActionResult<Message>> GetByIdAsync(int id)
+    public async Task<ActionResult<Message>> GetByIdAsync([FromQuery]int id)
     {
         var result = await messageService.GetByIdAsync(id);
         return result != null ? Ok(result) : NotFound();
@@ -34,7 +35,7 @@ public class MessagesController(IMessageService messageService) : ControllerBase
     
     [Authorize]
     [HttpGet("name")]
-    public async Task<ActionResult<IEnumerable<Message>>> GetByName([FromQuery]string name)
+    public async Task<ActionResult<IEnumerable<Message>>> GetByNameAsync([FromQuery]string name)
     {
         return Ok(await messageService.GetByNameAsync(name));
     }
@@ -42,18 +43,25 @@ public class MessagesController(IMessageService messageService) : ControllerBase
     [HttpPost]
     public async Task<ActionResult<Message>> CreateAsync([FromBody] MessageRequestDto requestDto)
     {
-        var newMessage = await messageService.CreateAsync(
-            requestDto.SenderName, 
-            requestDto.SenderEmail, 
-            requestDto.Text
-        );
+        try
+        {
+            var newMessage = await messageService.CreateAsync(
+                requestDto.SenderName,
+                requestDto.SenderEmail,
+                requestDto.Text
+            );
 
-        return Ok(newMessage);
+            return Ok(newMessage);
+        }
+        catch (DbUpdateException)
+        {
+            return Conflict("Failed to create message");
+        }
     }
 
     [Authorize]
     [HttpDelete("{id}")]
-    public async Task<IActionResult> Delete(int id)
+    public async Task<IActionResult> DeleteAsync([FromQuery]int id)
     {
         var result = await messageService.DeleteAsync(id);
         if (result == null)

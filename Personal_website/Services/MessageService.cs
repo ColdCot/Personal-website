@@ -20,52 +20,55 @@ public class MessageService(WebsiteDbContext context) : IMessageService
     {
         var senders = context.Senders.Where(s => s.Email == email).Select(s => s.Id);
 
-        if (!await senders.AnyAsync())
-        {
-            return Enumerable.Empty<Message>();
-        }
-
         return await context.Messages.Where(m => senders.Contains(m.senderId)).ToListAsync();
     }
 
     public async Task<IEnumerable<Message>> GetByNameAsync(string name)
     {
         var senders = context.Senders.Where(s => s.Name == name).Select(s => s.Id);
-
-        if (!await senders.AnyAsync())
-        {
-            return Enumerable.Empty<Message>();
-        }
         
         return await context.Messages.Where(m => senders.Contains(m.senderId)).ToListAsync();
     }
 
     public async Task<Message> CreateAsync(string senderName, string senderEmail, string text)
     {
-        Sender? sender = await context.Senders.FirstOrDefaultAsync(s => s.Name == senderName && s.Email == senderEmail);
-        if (sender == null)
+        await using var transaction = await context.Database.BeginTransactionAsync();
+        
+        try
         {
-            sender = new Sender
+            Sender? sender =
+                await context.Senders.FirstOrDefaultAsync(s => s.Name == senderName && s.Email == senderEmail);
+            if (sender == null)
             {
-                Name = senderName,
-                Email = senderEmail
-            };
-            
-            context.Senders.Add(sender);
-            
-            await context.SaveChangesAsync();
-        }
+                sender = new Sender
+                {
+                    Name = senderName,
+                    Email = senderEmail
+                };
 
-        Message message = new Message
+                context.Senders.Add(sender);
+
+                await context.SaveChangesAsync();
+            }
+
+            Message message = new Message
+            {
+                senderId = sender.Id,
+                text = text,
+            };
+
+            context.Messages.Add(message);
+            await context.SaveChangesAsync();
+            
+            await transaction.CommitAsync();
+
+            return message;
+        }
+        catch(DbUpdateException)
         {
-            senderId = sender.Id,
-            text = text,
-        };
-        
-        context.Messages.Add(message);
-        await context.SaveChangesAsync();
-        
-        return message;
+            await transaction.RollbackAsync();
+            throw;
+        }
     }
 
     public async Task<Message?> DeleteAsync(int id)
