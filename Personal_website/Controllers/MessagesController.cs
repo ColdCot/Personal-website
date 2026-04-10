@@ -55,7 +55,7 @@ public class MessagesController(IMessageService messageService, ILogger<Messages
         }
         catch (Exception ex)
         {
-            logger.LogError(ex.Message);
+            logger.LogError(ex, "Failed to create message");
             
             return StatusCode(StatusCodes.Status500InternalServerError, "Internal server error");
         }
