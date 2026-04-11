@@ -29,12 +29,12 @@ public class Program
 
         if (string.IsNullOrWhiteSpace(connectionString))
         {
-            throw new ArgumentException("The DefaultConnection environment variable is not set");
+            throw new ArgumentException("Missing required connection string: DefaultConnection");
         }
 
         if (string.IsNullOrWhiteSpace(identityString))
         {
-            throw new ArgumentException("The identityConnection environment variable is not set");
+            throw new ArgumentException("Missing required connection string: IdentityConnection");
         }
 
         // Add services to the container.
