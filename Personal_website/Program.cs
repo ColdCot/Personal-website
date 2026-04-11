@@ -23,18 +23,18 @@ public class Program
         
         builder.Services.Configure<JwtOptions>(
             builder.Configuration.GetSection("Jwt"));
-        
-        string? connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-        string? identityString = builder.Configuration.GetConnectionString("IdentityConnection");
+
+        var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+        var identityString = builder.Configuration.GetConnectionString("IdentityConnection");
 
         if (string.IsNullOrWhiteSpace(connectionString))
         {
-            throw new ArgumentException("The CONNECTION_STRING environment variable is not set");
+            throw new ArgumentException("The DB_CONNECTION environment variable is not set");
         }
 
         if (string.IsNullOrWhiteSpace(identityString))
         {
-            throw new ArgumentException("The IDENTITY STRING environment variable is not set");
+            throw new ArgumentException("The ID_CONNECTION STRING environment variable is not set");
         }
 
         // Add services to the container.
