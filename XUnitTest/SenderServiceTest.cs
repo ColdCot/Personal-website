@@ -42,10 +42,7 @@ public class SenderServiceTest
         await using var context = new WebsiteDbContext(options);
         var service = new SenderService(context);
 
-        foreach (var item in data)
-        {
-            context.Senders.Add(item);
-        }
+        context.Senders.AddRange(data);
         
         await context.SaveChangesAsync();
         
