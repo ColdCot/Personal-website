@@ -24,10 +24,11 @@ public class SenderServiceTest
     {
         var (context, service) = CreateTestEnvironment();
         
-        var result = await service.GetAllAsync();
-            
-        result.Should().BeEmpty();
-        await context.DisposeAsync();
+        await using (context)
+        {
+            var result = await service.GetAllAsync();
+            result.Should().BeEmpty();
+        }
     }
 
     [Fact]
@@ -35,23 +36,25 @@ public class SenderServiceTest
     {
         var (context, service) = CreateTestEnvironment();
 
-        var data = new List<Sender>
+        await using (context)
         {
-            new Sender { Id = 1, Name = "Test1", Email = "test1@gmail.com"},
-            new Sender { Id = 2, Name = "Test2", Email = "test2@gmail.com" },
-            new Sender { Id = 3, Name = "Test3", Email = "test3@gmail.com" },
-            new Sender { Id = 4, Name = "Test4", Email = "test4@gmail.com" },
-            new Sender { Id = 5, Name = "Test5", Email = "test5@gmail.com" },
-            new Sender { Id = 6, Name = "Test6", Email = "test6@gmail.com" },
-        };
+            var data = new List<Sender>
+            {
+                new Sender { Id = 1, Name = "Test1", Email = "test1@gmail.com" },
+                new Sender { Id = 2, Name = "Test2", Email = "test2@gmail.com" },
+                new Sender { Id = 3, Name = "Test3", Email = "test3@gmail.com" },
+                new Sender { Id = 4, Name = "Test4", Email = "test4@gmail.com" },
+                new Sender { Id = 5, Name = "Test5", Email = "test5@gmail.com" },
+                new Sender { Id = 6, Name = "Test6", Email = "test6@gmail.com" },
+            };
 
-        context.Senders.AddRange(data);
-        
-        await context.SaveChangesAsync();
-        
-        var result = await service.GetAllAsync();     
-        
-        result.Should().BeEquivalentTo(data);
-        await context.DisposeAsync();
+            context.Senders.AddRange(data);
+
+            await context.SaveChangesAsync();
+
+            var result = await service.GetAllAsync();
+
+            result.Should().BeEquivalentTo(data);
+        }
     }
 }
