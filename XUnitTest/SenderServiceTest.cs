@@ -7,27 +7,33 @@ using Personal_website.Services;
 namespace XUnitTest;
 
 public class SenderServiceTest
-{
-    [Fact]
-    public async Task ReturnsEmptyIfTableIsEmpty()
+{ 
+    private static (WebsiteDbContext context, SenderService service) CreateTestEnvironment()
     {
         var options = new DbContextOptionsBuilder<WebsiteDbContext>()
             .UseInMemoryDatabase(Guid.NewGuid().ToString())
             .Options;
-
-        await using var context = new WebsiteDbContext(options);
+    
+        var context = new WebsiteDbContext(options);
         var service = new SenderService(context);
+    
+        return (context, service);
+    }
+    [Fact]
+    public async Task ReturnsEmptyIfTableIsEmpty()
+    {
+        var (context, service) = CreateTestEnvironment();
+        
         var result = await service.GetAllAsync();
             
         result.Should().BeEmpty();
+        await context.DisposeAsync();
     }
 
     [Fact]
     public async Task ReturnsSendersWhenNotEmpty()
     {
-        var options = new DbContextOptionsBuilder<WebsiteDbContext>()
-            .UseInMemoryDatabase(Guid.NewGuid().ToString())
-            .Options;
+        var (context, service) = CreateTestEnvironment();
 
         var data = new List<Sender>
         {
@@ -39,15 +45,13 @@ public class SenderServiceTest
             new Sender { Id = 6, Name = "Test6", Email = "test6@gmail.com" },
         };
 
-        await using var context = new WebsiteDbContext(options);
-        var service = new SenderService(context);
-
         context.Senders.AddRange(data);
         
         await context.SaveChangesAsync();
         
-        var result = (await service.GetAllAsync()).ToList();
+        var result = await service.GetAllAsync();     
         
         result.Should().BeEquivalentTo(data);
+        await context.DisposeAsync();
     }
 }
