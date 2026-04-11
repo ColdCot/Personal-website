@@ -24,8 +24,8 @@ public class Program
         builder.Services.Configure<JwtOptions>(
             builder.Configuration.GetSection("Jwt"));
 
-        var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-        var identityString = builder.Configuration.GetConnectionString("IdentityConnection");
+        string? connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+        string? identityString = builder.Configuration.GetConnectionString("IdentityConnection");
 
         if (string.IsNullOrWhiteSpace(connectionString))
         {
