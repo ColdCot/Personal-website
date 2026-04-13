@@ -16,4 +16,4 @@ Backend for my personal website (frontend coming soon). This is a simple trainin
 
 ## 📜 License
 
-This project is licensed under the MIT License. See the [LICENSE](./LICENSE) file for details.
+This project is licensed under the MIT License. See the [LICENSE](./LICENSE.md) file for details.
